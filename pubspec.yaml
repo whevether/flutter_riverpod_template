@@ -55,8 +55,8 @@ dependencies:
   connectivity_plus: ^6.1.4 #网络连接状态
   flutter_screenutil: ^5.9.3 #屏幕适配
   flutter_riverpod: ^3.0.0-dev.16 #状态管理
-  flutter_riverpod_annotation: ^3.0.0-dev.16 #Riverpod 注解支持
   riverpod_generator: ^3.0.0-dev.16 #Riverpod 生成器
+  water_drop_nav_bar: ^2.2.2
 
 dev_dependencies:
   flutter_test:
@@ -68,6 +68,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+dependency_overrides:
+  analyzer: ^7.7.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
