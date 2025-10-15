@@ -39,7 +39,7 @@ dependencies:
   go_router: ^16.2.4 #路由
   dio: ^5.9.0 #网络请求
   permission_handler: ^12.0.1 #权限处理
-  hive_ce: ^2.14.0 #本地存储
+  hive_ce: ^2.15.0 #本地存储
   hive_ce_flutter: ^2.3.2 #本地存储flutter支持
   logger: ^2.6.2 #日志
   intl: ^0.20.2 #国际化
@@ -56,8 +56,9 @@ dependencies:
   local_auth: ^2.3.0 #本地生物识别
   connectivity_plus: ^7.0.0 #网络连接状态
   flutter_screenutil: ^5.9.3 #屏幕适配
-  flutter_riverpod: ^3.0.2 #状态管理
-  riverpod_generator: ^3.0.2 #Riverpod 生成器
+  flutter_riverpod: ^3.0.3 #状态管理
+  riverpod_generator: ^3.0.3 #Riverpod 生成器
+  riverpod_annotation: ^3.0.3
   water_drop_nav_bar: ^2.2.2 #水滴导航栏
   lottie: ^3.3.2 #动画
 
