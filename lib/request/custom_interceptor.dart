@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod_template/app/app_constant.dart';
 import 'package:flutter_riverpod_template/app/log.dart';
 import 'package:flutter_riverpod_template/model/login_result_model.dart';
-import 'package:flutter_riverpod_template/router/app_router.dart';
 import 'package:flutter_riverpod_template/services/local_storage_service.dart';
 
 class CustomInterceptor extends Interceptor {
