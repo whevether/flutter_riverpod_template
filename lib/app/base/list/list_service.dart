@@ -9,16 +9,16 @@ class ListArgs {
   final String url; // 必传
   final int pageSize; // 可选，默认值
   final int startPageNum; // 可选，默认值
-  final Map<String, dynamic> params;
-  final Map<String, dynamic> data;
+  final Map<String, dynamic>? params;
+  final Map<String, dynamic>? data;
   final String method;
 
   ListArgs({
     required this.url, // 必传
     this.pageSize = 10,
     this.startPageNum = 1,
-    this.params = const {},
-    this.data = const {},
+    this.params,
+    this.data,
     this.method = 'GET',
   });
 }
@@ -50,8 +50,8 @@ class ListAsyncNotifier<T> extends AsyncNotifier<List<T>> {
     _url = args.url;
     _pageSize = args.pageSize;
     _page = args.startPageNum;
-    _params = args.params;
-    _data = args.data;
+    _params = args.params ?? {};
+    _data = args.data ?? {};
     _method = args.method;
   }
 
