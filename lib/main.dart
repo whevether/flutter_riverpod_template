@@ -66,7 +66,7 @@ class MyApp extends ConsumerWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       child: MaterialApp.router(
-        title: 'Flutter BLoc Template',
+        title: 'Flutter Riverpod Template',
         scrollBehavior: AppScrollBehavior(),
         themeMode: appSetting.themeMode,
         theme: AppStyle.lightTheme,
