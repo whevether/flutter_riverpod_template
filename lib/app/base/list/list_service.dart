@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod_template/app/app_constant.dart';
-import 'package:flutter_riverpod_template/app/base/loading/loading_service.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter_riverpod_template/request/http_client.dart';
 
@@ -64,9 +63,6 @@ class ListAsyncNotifier<T> extends AsyncNotifier<List<T>> {
 
   //获取数据
   Future<List<T>> fetchList() async {
-    //读取loading状态
-    final load = ref.read(loadSyncProvider.notifier);
-    load.loading();
     _changeParams();
     Map<String, dynamic>? bean;
     // 请求返回数据
@@ -90,11 +86,8 @@ class ListAsyncNotifier<T> extends AsyncNotifier<List<T>> {
     }
     // 检查状态码是否正确
     if (bean == null) {
-      load.loadError(Exception(bean));
       return <T>[];
     }
-    //加载完成
-    load.loadDone();
     // 如果返回的数据不存在则返回一个空列表
     List<T> list = <T>[];
     // 如果当前页数等于总页数，表示没有更多数据
