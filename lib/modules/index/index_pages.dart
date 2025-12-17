@@ -40,7 +40,7 @@ class _IndexPagesState extends BaseConsumerState<IndexPages> {
         Scaffold(
           extendBody: true,
           resizeToAvoidBottomInset: false,
-          body: pageList[appSetting.value?.tabarIndex ?? 0],
+          body: pageList[appSetting.tabarIndex ?? 0],
           floatingActionButton: FloatingActionButton(
             elevation: 8,
             backgroundColor: theme.primaryColor,
@@ -58,7 +58,7 @@ class _IndexPagesState extends BaseConsumerState<IndexPages> {
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  color: appSetting.value?.themeMode == ThemeMode.light
+                  color: appSetting.themeMode == ThemeMode.light
                       ? AppColor.backgroundColorDark.withValues(alpha: 0.5)
                       : AppColor.backgroundColor.withValues(alpha: 0.5),
                   spreadRadius: 0,
@@ -72,7 +72,7 @@ class _IndexPagesState extends BaseConsumerState<IndexPages> {
               waterDropColor: theme.primaryColor,
               inactiveIconColor: theme.primaryColor,
               onItemSelected: (int index) {
-                if (index == appSetting.value?.tabarIndex) {
+                if (index == appSetting.tabarIndex) {
                   EventBus.instance.emit(
                     EventBus.kBottomNavigationBarClicked,
                     index,
@@ -82,7 +82,7 @@ class _IndexPagesState extends BaseConsumerState<IndexPages> {
                     .watch(appSettingProvider.notifier)
                     .onChangeTabarIndex(index);
               },
-              selectedIndex: appSetting.value?.tabarIndex ?? 0,
+              selectedIndex: appSetting.tabarIndex ?? 0,
               barItems: <BarItem>[
                 BarItem(
                   filledIcon: Icons.bookmark_rounded,

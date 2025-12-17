@@ -68,7 +68,7 @@ class MyApp extends ConsumerWidget {
       child: MaterialApp.router(
         title: 'Flutter BLoc Template',
         scrollBehavior: AppScrollBehavior(),
-        themeMode: appSetting.value?.themeMode,
+        themeMode: appSetting.themeMode,
         theme: AppStyle.lightTheme,
         darkTheme: AppStyle.darkTheme,
         localizationsDelegates: const [
@@ -82,7 +82,7 @@ class MyApp extends ConsumerWidget {
         routeInformationParser:
             AppRouter.instance.router.routeInformationParser,
         routerDelegate: AppRouter.instance.router.routerDelegate,
-        locale: appSetting.value?.locale,
+        locale: appSetting.locale,
         supportedLocales: const [
           Locale("zh", "CN"),
           Locale("en", "US"),

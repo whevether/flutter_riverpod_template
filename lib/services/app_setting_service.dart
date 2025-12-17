@@ -46,13 +46,13 @@ class AppSettingState {
 }
 
 /// Riverpod Notifier
-class AppSettingNotifier extends AsyncNotifier<AppSettingState> {
+class AppSettingNotifier extends Notifier<AppSettingState> {
   @override
-  Future<AppSettingState> build() async {
+  AppSettingState build()  {
     return _init();
   }
 
-  Future<AppSettingState> _init() async {
+  AppSettingState _init()  {
     final themeMode = ThemeMode.values[
       LocalStorageService.instance.getValue(LocalStorageService.kThemeMode, 1)
     ];
@@ -68,40 +68,41 @@ class AppSettingNotifier extends AsyncNotifier<AppSettingState> {
       false,
     );
 
-    return AppSettingState(
+    return  AppSettingState(
       themeMode: themeMode,
       locale: locale,
       firstRun: firstRun,
       localAuth: localAuth,
+      tabarIndex: 0
     );
   }
 
   /// 设置主题
   Future<void> setTheme(ThemeMode themeMode) async {
-    final current = state.value;
-    if (current?.themeMode == themeMode) return;
+    final current = state;
+    if (current.themeMode == themeMode) return;
     await LocalStorageService.instance.setValue(
       LocalStorageService.kThemeMode,
       themeMode.index,
     );
-    state = AsyncData(current!.copyWith(themeMode: themeMode));
+    state = current.copyWith(themeMode: themeMode);
   }
 
   /// 设置语言
   Future<void> setLocale(int locale) async {
-    final current = state.value;
-    if (current?.locale == AppConstant.mapLocale[locale]) return;
+    final current = state;
+    if (current.locale == AppConstant.mapLocale[locale]) return;
     await LocalStorageService.instance.setValue(
       LocalStorageService.kLanguage,
       locale,
     );
-    state = AsyncData(current!.copyWith(locale: AppConstant.mapLocale[locale]));
+    state = current.copyWith(locale: AppConstant.mapLocale[locale]);
   }
 
   /// 普通验证
   Future<bool> _authenticate() async {
     try {
-      return await state.value!.auth.authenticate(
+      return await state.auth.authenticate(
         localizedReason: '请验证以支付',
       );
     } on LocalAuthException catch (e) {
@@ -112,7 +113,7 @@ class AppSettingNotifier extends AsyncNotifier<AppSettingState> {
 
   Future<bool> _authenticateWithBiometrics() async {
     try {
-      return await state.value!.auth.authenticate(
+      return await state.auth.authenticate(
         localizedReason: '请验证以支付',
       );
     } on LocalAuthException catch (e) {
@@ -123,7 +124,7 @@ class AppSettingNotifier extends AsyncNotifier<AppSettingState> {
 
   Future<bool> _authenticateWithoutDialogs() async {
     try {
-      return await state.value!.auth.authenticate(
+      return await state.auth.authenticate(
         localizedReason: '请验证以支付',
       );
     } on LocalAuthException catch (e) {
@@ -134,7 +135,7 @@ class AppSettingNotifier extends AsyncNotifier<AppSettingState> {
 
   Future<bool> _authenticateWithErrorHandling() async {
     try {
-      return await state.value!.auth.authenticate(
+      return await state.auth.authenticate(
         localizedReason: '请验证以支付',
       );
     } on LocalAuthException catch (e) {
@@ -144,7 +145,7 @@ class AppSettingNotifier extends AsyncNotifier<AppSettingState> {
   }
 
   Future<bool> _checkSupport() async {
-    final auth = state.value!.auth;
+    final auth = state.auth;
     final canAuthenticateWithBiometrics = await auth.canCheckBiometrics;
     final canAuthenticate =
         canAuthenticateWithBiometrics || await auth.isDeviceSupported();
@@ -168,7 +169,7 @@ class AppSettingNotifier extends AsyncNotifier<AppSettingState> {
 
   /// 开启/关闭生物验证
   Future<void> onOpenFaceId(bool e, {int? authType = 0}) async {
-    final current = state.value!;
+    final current = state;
     if (current.localAuth == e) return;
 
     final mapAuth = {
@@ -195,37 +196,37 @@ class AppSettingNotifier extends AsyncNotifier<AppSettingState> {
       LocalStorageService.kLocalAuth,
       e,
     );
-    state = AsyncData(current.copyWith(localAuth: e));
+    state = current.copyWith(localAuth: e);
   }
 
   /// 首次运行
   Future<void> showFirstRun() async {
-    final current = state.value!;
+    final current = state;
     if (current.firstRun == true) {
       await LocalStorageService.instance.setValue<bool>(
         LocalStorageService.kFirstRun,
         false,
       );
-      state = AsyncData(current.copyWith(firstRun: false));
+      state = current.copyWith(firstRun: false);
       DialogUtils.checkUpdate();
     } else {
       await LocalStorageService.instance.setValue<bool>(
         LocalStorageService.kFirstRun,
         true,
       );
-      state = AsyncData(current.copyWith(firstRun: true));
+      state = current.copyWith(firstRun: true);
       DialogUtils.checkUpdate();
     }
   }
   //修改导航索引
   void onChangeTabarIndex(int? i){
-    final current = state.value!;
-    state = AsyncData(current.copyWith(tabarIndex: i));
+    final current = state;
+    state = current.copyWith(tabarIndex: i);
   }
 }
 
 /// Provider
 final appSettingProvider =
-    AsyncNotifierProvider<AppSettingNotifier, AppSettingState>(
+    NotifierProvider<AppSettingNotifier, AppSettingState>(
   AppSettingNotifier.new,
 );

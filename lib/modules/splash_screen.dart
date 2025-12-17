@@ -1,33 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod_template/app/base/base_consumer_stateful_widget.dart';
 import 'package:flutter_riverpod_template/app/base/base_state.dart';
-import 'package:flutter_riverpod_template/app/base/base_stateful_widget.dart';
 import 'package:flutter_riverpod_template/app/log.dart';
 import 'package:flutter_riverpod_template/router/router_path.dart';
+import 'package:flutter_riverpod_template/services/user_service.dart';
 // import 'package:flutter_riverpod_template/services/user_service.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 
-class SplashScreen extends BaseStatefulWidget {
+class SplashScreen extends BaseConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends BaseState<SplashScreen> {
+class _SplashScreenState extends BaseConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
     //
     Future.delayed(const Duration(seconds: 2), () {
-      if(mounted){
-        // if (state.loginResult == null) {
-        //       Log.d("User logged out");
-        //       super.context.go(RoutePath.kUserLogin);
-        //     } else if(state.loginResult?.token != null) {
-        //       Log.d("User logged in: ${state.loginResult?.token}");
-        //       super.context.go(RoutePath.kIndex);
-        //     }
+      if (mounted) {
+        final userServiceState = ref.read(userProvider);
+        if (userServiceState.value?.loginResult == null) {
+          Log.d("User logged out");
+          super.context.go(RoutePath.kUserLogin);
+        } else if (userServiceState.value?.loginResult?.token != null) {
+          Log.d(
+            "User logged in: ${userServiceState.value?.loginResult?.token}",
+          );
+          super.context.go(RoutePath.kIndex);
+        }
       }
     });
   }
