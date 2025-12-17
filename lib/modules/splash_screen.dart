@@ -17,25 +17,47 @@ class SplashScreen extends BaseConsumerStatefulWidget {
 }
 
 class _SplashScreenState extends BaseConsumerState<SplashScreen> {
+  late final ProviderSubscription _sub;
   @override
   void initState() {
     super.initState();
     //
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
-        final userServiceState = ref.read(userProvider);
-        if (userServiceState.value?.loginResult == null) {
-          Log.d("User logged out");
-          super.context.go(RoutePath.kUserLogin);
-        } else if (userServiceState.value?.loginResult?.token != null) {
-          Log.d(
-            "User logged in: ${userServiceState.value?.loginResult?.token}",
-          );
-          super.context.go(RoutePath.kIndex);
-        }
+        _sub = ref.listenManual<AsyncValue<UserState>>(userProvider, (
+          previous,
+          next,
+        ) {
+          if (next.hasValue) {
+            final user = next.value!;
+            if (user.loginResult?.token != null) {
+              Log.d("User logged in: ${user.loginResult?.token}");
+              super.context.go(RoutePath.kIndex);
+            } else {
+              Log.d("User logged out");
+              super.context.go(RoutePath.kUserLogin);
+            }
+          }
+        });
+        // if (userServiceState.value?.loginResult == null) {
+        //   Log.d("User logged out");
+        //   super.context.go(RoutePath.kUserLogin);
+        // } else if (userServiceState.value?.loginResult?.token != null) {
+        //   Log.d(
+        //     "User logged in: ${userServiceState.value?.loginResult?.token}",
+        //   );
+        //   super.context.go(RoutePath.kIndex);
+        // }
       }
     });
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _sub.close();
+  }
+
 
   @override
   Widget build(BuildContext context) {
