@@ -17,7 +17,6 @@ class LoginPages extends BaseConsumerStatefulWidget {
 class _LoginPageState extends BaseConsumerState<LoginPages> {
   @override
   Widget build(BuildContext context) {
-    final userAsync = ref.watch(userProvider);
     //监听登录状态改变来处理跳转到首页
     ref.listen<AsyncValue<UserState>>(userProvider, (previous, next) {
       next.whenOrNull(
@@ -32,11 +31,6 @@ class _LoginPageState extends BaseConsumerState<LoginPages> {
       appBar: AppBar(title: const Text('Login Page')),
       body: ListView(
         children: [
-          userAsync.when(
-            data: (_) => const SizedBox.shrink(), // UI 不负责跳转
-            loading: () => const CircularProgressIndicator(),
-            error: (err, stack) => Text('错误: $err'),
-          ),
           Center(
             child: ElevatedButton(
               onPressed: () async {
