@@ -99,7 +99,7 @@ class _SplashScreenState extends BaseConsumerState<SplashScreen> {
                   ),
                   const SizedBox(height: 20),
                   const Text(
-                    'wchat 遇见美好的你',
+                    'demo',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                   ),
