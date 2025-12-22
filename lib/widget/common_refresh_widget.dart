@@ -7,7 +7,7 @@ import 'package:flutter_riverpod_template/app/base/list/list_service.dart';
 import 'package:flutter_riverpod_template/widget/status/app_empty_widget.dart';
 
 typedef RefreshChild =
-    Widget Function(BuildContext context, List<dynamic> list);
+    Widget Function(BuildContext context, List<dynamic> list, ScrollController scrollController);
 
 class CommonRefreshWidget extends BaseConsumerStatefulWidget {
   final RefreshChild child;
@@ -36,7 +36,6 @@ class _CommonRefreshWidgetState<T>
     //api/asf/comic/GetComicList/?pageNo=1&pageSize=30&categoryId=716552973116985344&OngoingStatus=0
     final provider = listProvider(widget.listArgs);
     final listAsync = ref.read(provider.notifier);
-    final listAsyncState = ref.watch(provider);
     return EasyRefresh(
       triggerAxis: Axis.vertical,
 
@@ -70,17 +69,19 @@ class _CommonRefreshWidgetState<T>
       onRefresh: () => listAsync.refresh(),
       onLoad: () => listAsync.loadMore(),
       controller: listAsync.controller,
-      child: listAsyncState.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, _) => Center(child: Text('加载失败: $err')),
-        data: (data) => data.isEmpty
-            ? Center(
-                child:
-                    widget.emptyWidget ??
-                    AppEmptyWidget(onRefresh: listAsync.refresh),
-              )
-            : widget.child.call(context, data),
-      ),
+      child: ref
+          .watch(provider)
+          .when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (err, _) => Center(child: Text('加载失败: $err')),
+            data: (data) => data.isEmpty
+                ? Center(
+                    child:
+                        widget.emptyWidget ??
+                        AppEmptyWidget(onRefresh: listAsync.refresh),
+                  )
+                : widget.child.call(context, data,listAsync.scrollController),
+          ),
     );
   }
 

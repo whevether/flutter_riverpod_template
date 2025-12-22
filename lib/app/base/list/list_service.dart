@@ -40,7 +40,7 @@ class ListAsyncNotifier<T> extends AsyncNotifier<List<T>> {
   late String _url;
 
   ///EasyRefresh控制器
-  final EasyRefreshController controller = EasyRefreshController();
+  final EasyRefreshController controller = EasyRefreshController(controlFinishLoad: true,controlFinishRefresh: true);
   //滚动控制器
   final ScrollController scrollController = ScrollController();
 
@@ -86,6 +86,7 @@ class ListAsyncNotifier<T> extends AsyncNotifier<List<T>> {
     }
     // 检查状态码是否正确
     if (bean == null) {
+      controller.finishLoad(IndicatorResult.fail);
       return <T>[];
     }
     // 如果返回的数据不存在则返回一个空列表
@@ -130,31 +131,33 @@ class ListAsyncNotifier<T> extends AsyncNotifier<List<T>> {
     //分页
     _page = 1;
     _hasMore = true;
-    state = const AsyncValue.loading(progress: 0);
+    state = AsyncValue.loading();
     try {
       final items = await fetchList();
-      state = const AsyncValue.loading(progress: 1);
       state = AsyncValue.data(items);
+      controller.finishRefresh();
+      controller.resetFooter();
     } catch (e, st) {
-      state = const AsyncValue.loading(progress: 1);
       state = AsyncValue.error(e, st);
     }
   }
 
   //加载更多
   Future<void> loadMore() async {
-    if (!_hasMore) return;
-    state = AsyncValue.loading(progress: 0);
+    if (!_hasMore){
+      controller.finishLoad(IndicatorResult.noMore);
+      return;
+    } 
+    // state = AsyncValue.loading();
     try {
       _page++;
       final items = await fetchList();
       if (items.isEmpty) {
         _hasMore = false;
       }
-      state = const AsyncValue.loading(progress: 1);
       state = AsyncValue.data([...?state.value, ...items]);
+      controller.finishLoad(IndicatorResult.success);
     } catch (e, st) {
-      state = const AsyncValue.loading(progress: 1);
       state = AsyncValue.error(e, st);
     }
   }

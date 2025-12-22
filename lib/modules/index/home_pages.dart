@@ -21,11 +21,11 @@ class _HomePagesState extends BaseState<HomePages> {
             Text('Home Page'),
             Expanded(
               child: CommonRefreshWidget(
-                child: (_, list) {
+                child: (_, list,scrollController) {
                   return ListView.builder(
                     itemCount: list.length,
                     padding: all(16),
-                    controller: ScrollController(),
+                    controller: scrollController,
                     itemBuilder: (_, index) {
                       return Card(
                         child: ListTile(
