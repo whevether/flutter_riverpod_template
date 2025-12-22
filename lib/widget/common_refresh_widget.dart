@@ -5,6 +5,8 @@ import 'package:flutter_riverpod_template/app/base/base_consumer_stateful_widget
 import 'package:flutter_riverpod_template/app/base/base_state.dart';
 import 'package:flutter_riverpod_template/app/base/list/list_service.dart';
 import 'package:flutter_riverpod_template/widget/status/app_empty_widget.dart';
+import 'package:flutter_riverpod_template/widget/status/app_error_widget.dart';
+import 'package:flutter_riverpod_template/widget/status/app_loadding_widget.dart';
 
 typedef RefreshChild =
     Widget Function(BuildContext context, List<dynamic> list, ScrollController scrollController);
@@ -72,8 +74,8 @@ class _CommonRefreshWidgetState<T>
       child: ref
           .watch(provider)
           .when(
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (err, _) => Center(child: Text('加载失败: $err')),
+            loading: () => AppLoaddingWidget(),
+            error: (err, _) => AppErrorWidget(errorMsg: '加载失败',onRefresh: listAsync.refresh,),
             data: (data) => data.isEmpty
                 ? Center(
                     child:
