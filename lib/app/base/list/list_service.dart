@@ -86,7 +86,6 @@ class ListAsyncNotifier<T> extends AsyncNotifier<List<T>> {
     }
     // 检查状态码是否正确
     if (bean == null) {
-      controller.finishLoad(IndicatorResult.fail);
       return <T>[];
     }
     // 如果返回的数据不存在则返回一个空列表
@@ -139,13 +138,13 @@ class ListAsyncNotifier<T> extends AsyncNotifier<List<T>> {
       controller.resetFooter();
     } catch (e, st) {
       state = AsyncValue.error(e, st);
+      controller.finishLoad(IndicatorResult.fail);
     }
   }
 
   //加载更多
   Future<void> loadMore() async {
     if (!_hasMore){
-      controller.finishLoad(IndicatorResult.noMore);
       return;
     } 
     // state = AsyncValue.loading();
@@ -154,11 +153,14 @@ class ListAsyncNotifier<T> extends AsyncNotifier<List<T>> {
       final items = await fetchList();
       if (items.isEmpty) {
         _hasMore = false;
+        controller.finishLoad(IndicatorResult.noMore);
+        return;
       }
       state = AsyncValue.data([...?state.value, ...items]);
       controller.finishLoad(IndicatorResult.success);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
+      controller.finishLoad(IndicatorResult.fail);
     }
   }
 }
