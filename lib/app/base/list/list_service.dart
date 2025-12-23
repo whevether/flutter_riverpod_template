@@ -92,7 +92,7 @@ class ListAsyncNotifier<T> extends AsyncNotifier<List<T>> {
     List<T> list = <T>[];
     // 如果当前页数等于总页数，表示没有更多数据
     if (_page == bean[AppConstant.totalPageKey]) {
-      return state.value ?? <T>[];
+      return <T>[];
     }
     var result = bean[AppConstant.resultKey];
     for (var item in result) {
