@@ -51,7 +51,7 @@ class UserNotifier extends AsyncNotifier<UserState> {
 
   //登录,登录之后获取用户信息,保证用户信息每次登录都是新的，而不是存在缓存中的
   Future<void> login(Map<String, dynamic> data) async {
-    state = const AsyncValue.loading(progress: 0);
+    
     try {
       var result = await request.login(data);
       if (result == null) {
@@ -85,7 +85,7 @@ class UserNotifier extends AsyncNotifier<UserState> {
   }
   //单独获取用户信息,使用场景当修改了用户信息之后在获取新的用户信息
   Future<void> getUserInfo()async{
-    state = const AsyncValue.loading(progress: 0);
+    
     try{
       final currentState = state.value;
       if(currentState?.loginResult == null){
