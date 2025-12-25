@@ -51,11 +51,10 @@ class UserNotifier extends AsyncNotifier<UserState> {
 
   //登录,登录之后获取用户信息,保证用户信息每次登录都是新的，而不是存在缓存中的
   Future<void> login(Map<String, dynamic> data) async {
-    
+    state = const AsyncValue.loading();
     try {
       var result = await request.login(data);
       if (result == null) {
-        state = const AsyncValue.loading(progress: 1);
         state = AsyncValue.error("登录失败", StackTrace.fromString("登录数据是空的"));
         return;
       }
@@ -65,44 +64,36 @@ class UserNotifier extends AsyncNotifier<UserState> {
       );
       var userResult = await request.getUserInfo();
       if (userResult == null) {
-        state = const AsyncValue.loading(progress: 1);
         state = AsyncValue.error("获取信息失败", StackTrace.fromString("获取用户信息失败"));
         return;
       }
       final currentState = state.value;
       if(currentState != null){
-        state = const AsyncValue.loading(progress: 1);
         state = AsyncValue.data(currentState.copyWith(loginResult: result,user: userResult,));
       }else{
-        state = const AsyncValue.loading(progress: 1);
         state = AsyncData(UserState(loginResult: result,user: userResult));
       }
     } catch (e, st) {
-      state = const AsyncValue.loading(progress: 1);
       state = AsyncValue.error(e, st);
       return;
     }
   }
   //单独获取用户信息,使用场景当修改了用户信息之后在获取新的用户信息
   Future<void> getUserInfo()async{
-    
+     state = const AsyncValue.loading();
     try{
       final currentState = state.value;
       if(currentState?.loginResult == null){
-        state = const AsyncValue.loading(progress: 1);
         state = AsyncValue.error("获取信息失败", StackTrace.fromString("登录状态是空的"));
         return;
       }
       var userResult = await request.getUserInfo();
       if (userResult == null) {
-        state = const AsyncValue.loading(progress: 1);
         state = AsyncValue.error("获取信息失败", StackTrace.fromString("获取用户信息失败"));
         return;
       }
-      state = const AsyncValue.loading(progress: 1);
       state = AsyncValue.data(currentState!.copyWith(user: userResult));
     }catch(e,st){
-      state = const AsyncValue.loading(progress: 1);
       state = AsyncValue.error(e, st);
       return;
     }
