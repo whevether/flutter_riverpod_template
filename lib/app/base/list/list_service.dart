@@ -40,7 +40,8 @@ class ListAsyncNotifier<T> extends AsyncNotifier<List<T>> {
   late String _url;
 
   ///EasyRefresh控制器
-  final EasyRefreshController controller = EasyRefreshController(controlFinishLoad: true,controlFinishRefresh: true);
+  final EasyRefreshController controller = EasyRefreshController(
+      controlFinishLoad: true, controlFinishRefresh: true);
   //滚动控制器
   final ScrollController scrollController = ScrollController();
 
@@ -67,22 +68,18 @@ class ListAsyncNotifier<T> extends AsyncNotifier<List<T>> {
     Map<String, dynamic>? bean;
     // 请求返回数据
     if (_method == 'GET') {
-      bean =
-          await HttpClient.instance.getJson(
-                _url,
-                queryParameters: _params,
-                checkCode: true,
-              )
-              as Map<String, dynamic>?;
+      bean = await HttpClient.instance.getJson(
+        _url,
+        queryParameters: _params,
+        checkCode: true,
+      ) as Map<String, dynamic>?;
     } else if (_method == 'POST') {
-      bean =
-          await HttpClient.instance.postJson(
-                _url,
-                queryParameters: _params,
-                data: _data,
-                checkCode: true,
-              )
-              as Map<String, dynamic>?;
+      bean = await HttpClient.instance.postJson(
+        _url,
+        queryParameters: _params,
+        data: _data,
+        checkCode: true,
+      ) as Map<String, dynamic>?;
     }
     // 检查状态码是否正确
     if (bean == null) {
@@ -134,8 +131,15 @@ class ListAsyncNotifier<T> extends AsyncNotifier<List<T>> {
     try {
       final items = await fetchList();
       state = AsyncValue.data(items);
-      controller.finishRefresh();
-      controller.resetFooter();
+      if (items.isEmpty) {
+        // 数据为空 → 刷新结束 + 底部提示无更多
+        controller.finishRefresh();
+        controller.finishLoad(IndicatorResult.noMore);
+      } else {
+        // 有数据 → 刷新结束 + 重置底部
+        controller.finishRefresh();
+        controller.resetFooter();
+      }
     } catch (e, st) {
       state = AsyncValue.error(e, st);
       controller.finishLoad(IndicatorResult.fail);
@@ -144,9 +148,9 @@ class ListAsyncNotifier<T> extends AsyncNotifier<List<T>> {
 
   //加载更多
   Future<void> loadMore() async {
-    if (!_hasMore){
+    if (!_hasMore) {
       return;
-    } 
+    }
     // state = AsyncValue.loading();
     try {
       _page++;
