@@ -87,13 +87,13 @@ class ListAsyncNotifier<T> extends AsyncNotifier<List<T>> {
     }
     // 如果返回的数据不存在则返回一个空列表
     List<T> list = <T>[];
-    // 如果当前页数等于总页数，表示没有更多数据
-    if (_page == bean[AppConstant.totalPageKey]) {
-      return <T>[];
-    }
     var result = bean[AppConstant.resultKey];
     for (var item in result) {
       list.add(item as T);
+    }
+     // 如果当前页数等于总页数，表示没有更多数据
+    if (list == bean[AppConstant.totalCountKey]) {
+      return <T>[];
     }
     return list;
   }

@@ -26,7 +26,7 @@ class AppConstant {
   //结果key
   static const String resultKey = 'result';
   //总分页
-  static const String totalPageKey = 'totalPage';
+  static const String totalCountKey = 'totalCount';
    //支持多语言
   static Map<int, Locale?> mapLocale = {
     0: Locale("en", "US"),
