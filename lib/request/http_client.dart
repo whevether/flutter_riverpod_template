@@ -59,8 +59,7 @@ class HttpClient {
           await SmartDialog.showToast(result.data[AppConstant.messageKey]);
           return throw AppError(
             result.data[AppConstant.messageKey].toString(),
-            code:
-                int.tryParse(result.data[AppConstant.statusKey].toString()) ??
+            code: int.tryParse(result.data[AppConstant.statusKey].toString()) ??
                 -1,
           );
         }
@@ -70,16 +69,16 @@ class HttpClient {
       if (e.type == DioExceptionType.cancel) {
         rethrow;
       }
-      String msg = e.response?.data[AppConstant.messageKey] ?? e.message;
+      String msg = e.response?.data is Map
+          ? e.response?.data[AppConstant.messageKey]
+          : e.message;
       if (e.type == DioExceptionType.badResponse) {
-        if (e.response?.statusCode != AppConstant.notAuthCode &&
-            e.response?.statusCode != AppConstant.noPermissionCode) {
-          await SmartDialog.showToast(msg);
-        }
-        return throw AppError(msg,code: -1);
+        await SmartDialog.showToast(msg);
+
+        return throw AppError(msg, code: -1);
       }
       await SmartDialog.showToast(msg);
-      return throw AppError(msg,code: -1);
+      return throw AppError(msg, code: -1);
     }
   }
 
@@ -162,9 +161,8 @@ class HttpClient {
         options: Options(
           responseType: ResponseType.json,
           headers: header,
-          contentType: formUrlEncoded
-              ? Headers.formUrlEncodedContentType
-              : null,
+          contentType:
+              formUrlEncoded ? Headers.formUrlEncodedContentType : null,
         ),
         cancelToken: cancel,
       );
@@ -177,8 +175,7 @@ class HttpClient {
           await SmartDialog.showToast(result.data[AppConstant.messageKey]);
           return throw AppError(
             result.data[AppConstant.messageKey].toString(),
-            code:
-                int.tryParse(result.data[AppConstant.statusKey].toString()) ??
+            code: int.tryParse(result.data[AppConstant.statusKey].toString()) ??
                 -1,
           );
         }
@@ -188,16 +185,16 @@ class HttpClient {
       if (e.type == DioExceptionType.cancel) {
         rethrow;
       }
-      String msg = e.response?.data[AppConstant.messageKey] ?? e.message;
+      String msg = e.response?.data is Map
+          ? e.response?.data[AppConstant.messageKey]
+          : e.message;
       if (e.type == DioExceptionType.badResponse) {
-        if (e.response?.statusCode != AppConstant.notAuthCode &&
-            e.response?.statusCode != AppConstant.noPermissionCode) {
-          await SmartDialog.showToast(msg);
-        }
-        return throw AppError(msg,code: -1);
+        await SmartDialog.showToast(msg);
+
+        return throw AppError(msg, code: -1);
       }
       await SmartDialog.showToast(msg);
-      return throw AppError(msg,code: -1);
+      return throw AppError(msg, code: -1);
     }
   }
 }
