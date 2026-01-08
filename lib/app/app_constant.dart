@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod_template/app/env.dart';
 
 class AppConstant {
   //视频缓存路径
@@ -10,7 +11,7 @@ class AppConstant {
    //头像缓存路径
   static const String avatarCache = 'avatarCache';
   //api地址
-  static String serverUrl = 'https://api.infodream6789.xyz';
+  static String serverUrl = '${Env.apiBaseUrl}:${Env.httpPort}';
   //成功状态码
   static const int successCode = 200;
   //默认状态码
