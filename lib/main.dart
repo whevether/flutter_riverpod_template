@@ -19,7 +19,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod_template/router/router_path.dart';
 import 'package:flutter_riverpod_template/services/user_service.dart';
-import 'package:go_router/go_router.dart';
 
 Future<void> main() async {
   await runZonedGuarded(
@@ -68,16 +67,14 @@ class MyApp extends ConsumerWidget {
     ref.listen<AsyncValue<UserState>>(userProvider, (previous, next) {
       next.whenOrNull(
         data: (user) {
-  
-              // 用户登录状态变化监听
-              if (user.loginResult == null) {
-                Log.d("User logged out");
-                AppRouter.instance.router.go(RoutePath.kUserLogin);
-              } else if(user.loginResult != null) {
-                Log.d("User logged in: ${user.loginResult?.token}");
-                AppRouter.instance.router.go(RoutePath.kIndex);
-              }
-            
+          // 用户登录状态变化监听
+          if (user.loginResult == null) {
+            Log.d("User logged out");
+            AppRouter.instance.router.go(RoutePath.kUserLogin);
+          } else if (user.loginResult != null) {
+            Log.d("User logged in: ${user.loginResult?.token}");
+            AppRouter.instance.router.go(RoutePath.kIndex);
+          }
         },
       );
     });
