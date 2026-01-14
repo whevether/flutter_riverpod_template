@@ -2,11 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod_template/app/base/base_consumer_stateful_widget.dart';
 import 'package:flutter_riverpod_template/app/base/base_state.dart';
-import 'package:flutter_riverpod_template/app/log.dart';
-import 'package:flutter_riverpod_template/router/router_path.dart';
-import 'package:flutter_riverpod_template/services/user_service.dart';
-// import 'package:flutter_riverpod_template/services/user_service.dart';
-import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 
 class SplashScreen extends BaseConsumerStatefulWidget {
@@ -17,46 +12,6 @@ class SplashScreen extends BaseConsumerStatefulWidget {
 }
 
 class _SplashScreenState extends BaseConsumerState<SplashScreen> {
-  late final ProviderSubscription _sub;
-  @override
-  void initState() {
-    super.initState();
-    //
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        _sub = ref.listenManual<AsyncValue<UserState>>(userProvider, (
-          previous,
-          next,
-        ) {
-          if (next.hasValue) {
-            final user = next.value!;
-            if (user.loginResult?.token != null) {
-              Log.d("User logged in: ${user.loginResult?.token}");
-              super.context.go(RoutePath.kIndex);
-            } else {
-              Log.d("User logged out");
-              super.context.go(RoutePath.kUserLogin);
-            }
-          }
-        });
-        // if (userServiceState.value?.loginResult == null) {
-        //   Log.d("User logged out");
-        //   super.context.go(RoutePath.kUserLogin);
-        // } else if (userServiceState.value?.loginResult?.token != null) {
-        //   Log.d(
-        //     "User logged in: ${userServiceState.value?.loginResult?.token}",
-        //   );
-        //   super.context.go(RoutePath.kIndex);
-        // }
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _sub.close();
-  }
 
 
   @override
