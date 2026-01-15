@@ -1,10 +1,13 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod_template/app/app_constant.dart';
 import 'package:flutter_riverpod_template/app/log.dart';
 import 'package:flutter_riverpod_template/model/login_result_model.dart';
+import 'package:flutter_riverpod_template/router/app_router.dart';
 import 'package:flutter_riverpod_template/services/local_storage_service.dart';
+import 'package:flutter_riverpod_template/services/user_service.dart';
 
 class CustomInterceptor extends Interceptor {
   @override
@@ -34,6 +37,10 @@ Request Headers：${err.requestOptions.headers}
 Response Headers：${err.response?.headers.map}
 Response Data：${err.response?.data}''', err.stackTrace);
     if (err.response?.statusCode == AppConstant.notAuthCode || err.response?.statusCode == AppConstant.noPermissionCode) {
+      var currentContext = AppRouter.instance.navigatorKey.currentContext;
+      if (currentContext != null) {
+       ProviderScope.containerOf(currentContext).read(userProvider.notifier).logout();
+      }
     }
     super.onError(err, handler);
   }

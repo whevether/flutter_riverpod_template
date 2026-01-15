@@ -11,14 +11,13 @@ import 'package:flutter_riverpod_template/i18n/localization_intl.dart';
 import 'package:flutter_riverpod_template/router/app_router.dart';
 import 'package:flutter_riverpod_template/services/app_setting_service.dart';
 import 'package:flutter_riverpod_template/services/local_storage_service.dart';
+import 'package:flutter_riverpod_template/services/user_service.dart';
 import 'package:flutter_riverpod_template/widget/status/app_loadding_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:hive_ce_flutter/adapters.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_riverpod_template/router/router_path.dart';
-import 'package:flutter_riverpod_template/services/user_service.dart';
 
 Future<void> main() async {
   await runZonedGuarded(
@@ -63,20 +62,10 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appSetting = ref.watch(appSettingProvider);
-    //监听登录状态改变来处理跳转到首页
-    ref.listen<AsyncValue<UserState>>(userProvider, (previous, next) {
-      next.whenOrNull(
-        data: (user) {
-          // 用户登录状态变化监听
-          if (user.loginResult == null) {
-            Log.d("User logged out");
-            AppRouter.instance.router.go(RoutePath.kUserLogin);
-          } else if (user.loginResult != null) {
-            Log.d("User logged in: ${user.loginResult?.token}");
-            AppRouter.instance.router.go(RoutePath.kIndex);
-          }
-        },
-      );
+    // --- 监听状态变化并手动触发刷新 ---
+    ref.listen(userProvider, (previous, next) {
+      // 当 UserState 变化时，通知单例路由重新计算 redirect
+      routerRefreshNotifier.update();
     });
     return ScreenUtilInit(
       designSize: const Size(375, 812),
@@ -94,11 +83,7 @@ class MyApp extends ConsumerWidget {
           GlobalCupertinoLocalizations.delegate,
           LanguageLocalizationsDelegate(),
         ],
-        routeInformationProvider:
-            AppRouter.instance.router.routeInformationProvider,
-        routeInformationParser:
-            AppRouter.instance.router.routeInformationParser,
-        routerDelegate: AppRouter.instance.router.routerDelegate,
+        routerConfig: AppRouter.instance.getRouter(ref),
         locale: appSetting.locale,
         supportedLocales: const [
           Locale("zh", "CN"),

@@ -98,6 +98,13 @@ class UserNotifier extends AsyncNotifier<UserState> {
       return;
     }
   }
+  //登出
+  void logout(){
+    LocalStorageService.instance.removeValue(
+      LocalStorageService.kToken,
+    );
+    state = AsyncValue.data(UserState());
+  }
 }
 
 /// Provider
