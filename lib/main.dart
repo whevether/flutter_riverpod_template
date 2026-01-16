@@ -11,7 +11,6 @@ import 'package:flutter_riverpod_template/i18n/localization_intl.dart';
 import 'package:flutter_riverpod_template/router/app_router.dart';
 import 'package:flutter_riverpod_template/services/app_setting_service.dart';
 import 'package:flutter_riverpod_template/services/local_storage_service.dart';
-import 'package:flutter_riverpod_template/services/user_service.dart';
 import 'package:flutter_riverpod_template/widget/status/app_loadding_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
@@ -62,11 +61,6 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appSetting = ref.watch(appSettingProvider);
-    // --- 监听状态变化并手动触发刷新 ---
-    ref.listen(userProvider, (previous, next) {
-      // 当 UserState 变化时，通知单例路由重新计算 redirect
-      routerRefreshNotifier.update();
-    });
     return ScreenUtilInit(
       designSize: const Size(375, 812),
       minTextAdapt: true,

@@ -13,87 +13,134 @@ class RouterRefreshNotifier extends ChangeNotifier {
   void update() {
     notifyListeners();
   }
+
+  bool _isSplashFinished = false;
+
+  bool get isSplashFinished => _isSplashFinished;
+
+  // 当 Splash 播完时调用
+  void finishSplash() {
+    _isSplashFinished = true;
+    notifyListeners(); // 关键：通知 GoRouter 重新运行 redirect
+  }
 }
+
 // 1. 定义一个全局的监听器（单例或全局变量）
 // 用于手动或自动通知 GoRouter 重新执行 redirect 逻辑
 final routerRefreshNotifier = RouterRefreshNotifier();
 
 class AppRouter {
-  static final instance = AppRouter._();
   AppRouter._();
+  static final AppRouter instance = AppRouter._();
 
-  final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
-
-  // 关键：定义一个变量来持有 router
   GoRouter? _router;
 
-  // 提供一个获取方法，如果未初始化则报错或通过 WidgetRef 初始化
+  // 全局 Key，方便 Dio 或其他地方在没有 context 时跳转
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
   GoRouter getRouter(WidgetRef ref) {
-    _router ??= GoRouter(
-      initialLocation: RoutePath.kSplash,
+    // 如果已经初始化，直接返回
+    if (_router != null) return _router!;
+
+    // --- 在路由内部监听用户状态 ---
+    ref.listen(userProvider, (previous, next) {
+      // 1. 如果之前加载中，现在加载完了，执行刷新
+      final wasLoading = previous?.isLoading ?? true;
+      final isNowLoading = next.isLoading;
+
+      // 2. 核心对比：比较登录结果是否真的发生了变化
+      final oldResult = previous?.value?.loginResult;
+      final newResult = next.value?.loginResult;
+
+      // 只有当“加载状态”改变，或者“登录数据”不一致时才通知路由
+      if (wasLoading != isNowLoading || oldResult != newResult) {
+        routerRefreshNotifier.update();
+      }
+    });
+
+    _router = GoRouter(
       navigatorKey: navigatorKey,
-      observers: [FlutterSmartDialog.observer],
-      // 核心：将 context 中的 userBloc 转换为 Listenable
       refreshListenable: routerRefreshNotifier,
-
+      observers: [FlutterSmartDialog.observer],
+      initialLocation: RoutePath.kSplash,
+      routes: _routes, // 你的路由列表
       redirect: (context, state) {
-        // 通过 context 获取 Riverpod 容器中的 userProvider 状态
-        final userAsync = ProviderScope.containerOf(context).read(userProvider);
+        final isSplashFinished = routerRefreshNotifier.isSplashFinished;
+        final location = state.matchedLocation;
 
+        // 1. Splash 锁定逻辑
+        if (!isSplashFinished) return RoutePath.kSplash;
+
+        // 2. 登录态分流逻辑
+        final userAsync = ref.read(userProvider);
         if (userAsync.isLoading) return null;
 
-        final user = userAsync.value;
-        final bool isLoggedIn = user?.loginResult != null;
-        final String location = state.matchedLocation;
+        final isLoggedIn = userAsync.value?.loginResult != null;
 
-        // 逻辑：如果未登录且不在登录页 -> 去登录
         if (!isLoggedIn) {
-          if (location != RoutePath.kUserLogin ||
-              location != RoutePath.kSplash) {
-            return RoutePath.kUserLogin;
-          }
-        }
-
-        // 逻辑：如果已登录且在登录页/启动页 -> 去首页
-        if (isLoggedIn) {
+          // 未登录且不在登录页 -> 去登录
+          return (location != RoutePath.kUserLogin)
+              ? RoutePath.kUserLogin
+              : null;
+        } else {
+          // 已登录且在登录/启动页 -> 去首页
           if (location == RoutePath.kUserLogin ||
               location == RoutePath.kSplash) {
             return RoutePath.kIndex;
           }
         }
-
         return null;
       },
-      routes: _routes,
     );
 
     return _router!;
   }
 
-  // ... 保持 _routes 和 _fadeTransitionPage 不变 ...
-  List<RouteBase> get _routes => [
-        GoRoute(
-          name: 'splash',
-          path: RoutePath.kSplash,
-          pageBuilder: (context, state) => _fadeTransitionPage(
-              context: context, child: const SplashScreen()),
-        ),
-        GoRoute(
-          name: 'login',
-          path: RoutePath.kUserLogin,
-          pageBuilder: (context, state) =>
-              _fadeTransitionPage(context: context, child: LoginPages()),
-        ),
-        GoRoute(
-          name: 'index',
-          path: RoutePath.kIndex,
-          pageBuilder: (context, state) =>
-              _fadeTransitionPage(context: context, child: IndexPages()),
-        ),
-      ];
+  List<RouteBase> get _routes {
+    return [
+      GoRoute(
+        name: 'splash',
+        path: RoutePath.kSplash,
+        pageBuilder: (context, state) {
+          return _fadeTransitionPage(context: context, child: SplashScreen());
+        },
+      ),
+      GoRoute(
+        name: 'login',
+        path: RoutePath.kUserLogin,
+        pageBuilder: (context, state) {
+          return _fadeTransitionPage(context: context, child: LoginPages());
+        },
+        // redirect: (context, state) {
+        //   var userState = context.read<UserBloc>().state;
+        //   if (userState.loginResult?.token != null) {
+        //     return RoutePath.kIndex;
+        //   }
+        //   return null;
+        // },
+      ),
+      GoRoute(
+        name: 'index',
+        path: RoutePath.kIndex,
+        pageBuilder: (context, state) {
+          return _fadeTransitionPage(context: context, child: IndexPages());
+        },
+        // redirect: (context, state) {
+        //   var userState = context.read<UserBloc>().state;
+        //   if (userState.loginResult?.token == null) {
+        //     return RoutePath.kUserLogin;
+        //   }
+        //   return null;
+        // },
+      ),
+    ];
+  }
 
-  Page<void> _fadeTransitionPage(
-      {required BuildContext context, required Widget child}) {
+  // 页面动画
+  Page<void> _fadeTransitionPage({
+    required BuildContext context,
+    required Widget child,
+  }) {
     return CustomTransitionPage(
       child: child,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod_template/app/base/base_consumer_stateful_widget.dart';
 import 'package:flutter_riverpod_template/app/base/base_state.dart';
+import 'package:flutter_riverpod_template/router/app_router.dart';
 import 'package:lottie/lottie.dart';
 
 class SplashScreen extends BaseConsumerStatefulWidget {
@@ -13,6 +14,13 @@ class SplashScreen extends BaseConsumerStatefulWidget {
 
 class _SplashScreenState extends BaseConsumerState<SplashScreen> {
 
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(seconds: 3), () {
+      routerRefreshNotifier.finishSplash();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

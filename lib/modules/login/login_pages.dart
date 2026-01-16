@@ -24,8 +24,8 @@ class _LoginPageState extends BaseConsumerState<LoginPages> {
               onPressed: () async {
                 await ref.read(userProvider.notifier).login({
                   'loginType': 'account',
-                  'username': 'test',
-                  'password': 'test',
+                  'username': 'admin',
+                  'password': 'admin',
                   'tenancyId': '1',
                 });
               },
