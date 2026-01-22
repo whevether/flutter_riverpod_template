@@ -35,8 +35,7 @@ class _IndexPagesState extends BaseConsumerState<IndexPages> {
   Widget build(BuildContext context) {
     final appSetting = ref.watch(appSettingProvider);
     final theme = Theme.of(context);
-    return Stack(
-      children: [
+    return 
         Scaffold(
           extendBody: true,
           resizeToAvoidBottomInset: false,
@@ -103,8 +102,6 @@ class _IndexPagesState extends BaseConsumerState<IndexPages> {
               ],
             ),
           ),
-        ),
-      ],
-    );
+        );
   }
 }
