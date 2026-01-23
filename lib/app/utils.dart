@@ -322,61 +322,51 @@ class Utils {
   /// 分享
   static void share(String url, {String content = ""}) async {
     await DialogUtils.showBottomSheetCommon<void>(
+      header: DialogUtils.buildBottomSheetHeader(
+          showClose: true,
+          closeColor: AppColor.backgroundColorDark,
+          title: '分享'),
       [
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(
-              height: 36,
-            ),
-            DialogUtils.buildBottomSheetHeader(
-                showClose: true,
-                closeColor: AppColor.backgroundColorDark,
-                title: '分享'),
-            SizedBox(
-              height: 10.h,
-            ),
-            ListTile(
-              leading: const Icon(Icons.copy),
-              title: const Text("复制链接"),
-              onTap: () {
-                SmartDialog.dismiss();
-                copyText(url);
-              },
-            ),
-            Visibility(
-              visible: content.isNotEmpty,
-              child: ListTile(
-                leading: const Icon(Icons.copy),
-                title: const Text("复制标题与链接"),
-                onTap: () {
-                  SmartDialog.dismiss();
-                  copyText("$content\n$url");
-                },
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.public),
-              title: const Text("浏览器打开"),
-              onTap: () {
-                SmartDialog.dismiss();
-                openLaunchUrlString(url);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.share),
-              title: const Text("系统分享"),
-              onTap: () {
-                SmartDialog.dismiss();
-                SharePlus.instance
-                    .share(ShareParams(title: content, text: url));
-              },
-            ),
-          ],
-        )
+        SizedBox(
+          height: 10.h,
+        ),
+        ListTile(
+          leading: const Icon(Icons.copy),
+          title: const Text("复制链接"),
+          onTap: () {
+            SmartDialog.dismiss();
+            copyText(url);
+          },
+        ),
+        Visibility(
+          visible: content.isNotEmpty,
+          child: ListTile(
+            leading: const Icon(Icons.copy),
+            title: const Text("复制标题与链接"),
+            onTap: () {
+              SmartDialog.dismiss();
+              copyText("$content\n$url");
+            },
+          ),
+        ),
+        ListTile(
+          leading: const Icon(Icons.public),
+          title: const Text("浏览器打开"),
+          onTap: () {
+            SmartDialog.dismiss();
+            openLaunchUrlString(url);
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.share),
+          title: const Text("系统分享"),
+          onTap: () {
+            SmartDialog.dismiss();
+            SharePlus.instance.share(ShareParams(title: content, text: url));
+          },
+        ),
       ],
       'show_share',
-      height: 330.h,
       showTopBorder: true,
     );
   }

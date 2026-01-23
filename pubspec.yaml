@@ -56,8 +56,8 @@ dependencies:
   local_auth: ^3.0.0 #本地生物识别
   connectivity_plus: ^7.0.0 #网络连接状态
   flutter_screenutil: ^5.9.3 #屏幕适配
-  flutter_riverpod: ^3.1.0 #状态管理
-  riverpod_generator: ^4.0.0+1 #Riverpod 生成器
+  flutter_riverpod: ^3.2.0 #状态管理
+  riverpod_generator: ^4.0.2 #Riverpod 生成器
   water_drop_nav_bar: ^2.2.2 #水滴导航栏
   lottie: ^3.3.2 #动画
 
@@ -71,6 +71,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+dependency_overrides:
+  analyzer: ^9.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
