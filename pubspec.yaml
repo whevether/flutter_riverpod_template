@@ -39,15 +39,15 @@ dependencies:
   go_router: ^17.0.1 #路由
   dio: ^5.9.0 #网络请求
   permission_handler: ^12.0.1 #权限处理
-  hive_ce: ^2.16.0 #本地存储
-  hive_ce_flutter: ^2.3.3 #本地存储flutter支持
+  hive_ce: ^2.19.1 #本地存储
+  hive_ce_flutter: ^2.3.4 #本地存储flutter支持
   logger: ^2.6.2 #日志
   intl: ^0.20.2 #国际化
   easy_refresh: ^3.4.0 #下拉刷新
   extended_image: ^10.0.1 #图片加载
   flutter_smart_dialog: ^4.9.8+9 #对话框
   package_info_plus: ^9.0.0 #获取包信息
-  device_info_plus: ^12.2.0 #获取设备信息
+  device_info_plus: ^12.3.0 #获取设备信息
   url_launcher: ^6.3.2 #打开链接
   share_plus: ^12.0.1 #分享
   path_provider: ^2.1.5 #获取文件路径
