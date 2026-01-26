@@ -39,9 +39,6 @@ class AppRouter {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   GoRouter getRouter(WidgetRef ref) {
-    // 如果已经初始化，直接返回
-    if (_router != null) return _router!;
-
     // --- 在路由内部监听用户状态 ---
     ref.listen(userProvider, (previous, next) {
       // 1. 如果之前加载中，现在加载完了，执行刷新
@@ -57,8 +54,8 @@ class AppRouter {
         routerRefreshNotifier.update();
       }
     });
-
-    _router = GoRouter(
+    // 如果已经初始化，直接返回
+    _router ??= GoRouter(
       navigatorKey: navigatorKey,
       refreshListenable: routerRefreshNotifier,
       observers: [FlutterSmartDialog.observer],
