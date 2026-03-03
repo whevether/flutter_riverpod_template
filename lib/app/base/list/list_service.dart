@@ -59,11 +59,11 @@ class ListAsyncNotifier<T> extends AsyncNotifier<List<T>> {
   @override
   Future<List<T>> build() async {
     // 初始加载第一页
-    return await fetchList();
+    return await fetchList(true);
   }
 
   //获取数据
-  Future<List<T>> fetchList() async {
+  Future<List<T>> fetchList(bool isInit = true) async {
     _changeParams();
     Map<String, dynamic>? bean;
     // 请求返回数据
@@ -93,7 +93,8 @@ class ListAsyncNotifier<T> extends AsyncNotifier<List<T>> {
     }
      // 如果当前页数等于总页数，表示没有更多数据
     var listLenght = bean[AppConstant.totalCountKey] ?? 0;
-    if (state.value?.length == listLenght) {
+    var currentListLenght = isInit ? list.length : state.value?.length
+    if (currentListLenght == listLenght) {
       return <T>[];
     }
     return list;
@@ -130,7 +131,7 @@ class ListAsyncNotifier<T> extends AsyncNotifier<List<T>> {
     _hasMore = true;
     state = AsyncValue.loading();
     try {
-      final items = await fetchList();
+      final items = await fetchList(true);
       state = AsyncValue.data(items);
       if (items.isEmpty) {
         // 数据为空 → 刷新结束 + 底部提示无更多
@@ -155,7 +156,7 @@ class ListAsyncNotifier<T> extends AsyncNotifier<List<T>> {
     // state = AsyncValue.loading();
     try {
       _page++;
-      final items = await fetchList();
+      final items = await fetchList(false);
       if (items.isEmpty) {
         _hasMore = false;
         controller.finishLoad(IndicatorResult.noMore);
