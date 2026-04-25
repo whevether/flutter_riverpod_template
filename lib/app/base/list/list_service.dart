@@ -12,13 +12,14 @@ class ListArgs {
   final Map<String, dynamic>? params;
   final Map<String, dynamic>? data;
   final String method;
-
+  final String? listExt; //list扩展字段
   ListArgs({
     required this.url, // 必传
     this.pageSize = 10,
     this.startPageNum = 1,
     this.params,
     this.data,
+    this.listExt,
     this.method = 'GET',
   });
 }
@@ -38,7 +39,8 @@ class ListAsyncNotifier<T> extends AsyncNotifier<List<T>> {
   bool _hasMore = true;
   //请求地址
   late String _url;
-
+  //list 扩展字段
+  String? _listExt;
   ///EasyRefresh控制器
   final EasyRefreshController controller = EasyRefreshController(
       controlFinishLoad: true, controlFinishRefresh: true);
@@ -54,6 +56,7 @@ class ListAsyncNotifier<T> extends AsyncNotifier<List<T>> {
     _params = args.params ?? {};
     _data = args.data ?? {};
     _method = args.method;
+    _listExt = args.listExt;
   }
 
   @override
@@ -87,14 +90,14 @@ class ListAsyncNotifier<T> extends AsyncNotifier<List<T>> {
     }
     // 如果返回的数据不存在则返回一个空列表
     List<T> list = <T>[];
-    var result = bean[AppConstant.resultKey];
+    var result =  _listExt != null ? bean[AppConstant.resultKey][_listExt] : bean[AppConstant.resultKey];
     for (var item in result) {
       list.add(item as T);
     }
      // 如果当前页数等于总页数，表示没有更多数据
     var listLenght = bean[AppConstant.totalCountKey] ?? 0;
-    var currentListLenght = isInit ? list.length : state.value?.length;
-    if (currentListLenght == listLenght) {
+    final currentLength = (isInit ? list.length : state.value?.length) ?? 0;
+    if (!isInit && currentLength == listLength) {
       return <T>[];
     }
     return list;
@@ -103,10 +106,10 @@ class ListAsyncNotifier<T> extends AsyncNotifier<List<T>> {
   // 修改参数
   void _changeParams() {
     if (_method == 'GET') {
-      _params['pageNo'] = _page;
+      _params['page'] = _page;
       _params['pageSize'] = _pageSize;
     } else if (_method == 'POST') {
-      _data['pageNo'] = _page;
+      _data['page'] = _page;
       _data['pageSize'] = _pageSize;
     }
   }
@@ -156,7 +159,7 @@ class ListAsyncNotifier<T> extends AsyncNotifier<List<T>> {
     // state = AsyncValue.loading();
     try {
       _page++;
-      final items = await fetchList(isInit=true);
+      final items = await fetchList(isInit: false);
       if (items.isEmpty) {
         _hasMore = false;
         controller.finishLoad(IndicatorResult.noMore);
