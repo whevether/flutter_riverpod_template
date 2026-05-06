@@ -95,7 +95,7 @@ class ListAsyncNotifier<T> extends AsyncNotifier<List<T>> {
       list.add(item as T);
     }
      // 如果当前页数等于总页数，表示没有更多数据
-    var listLenght = bean[AppConstant.totalCountKey] ?? 0;
+    var listLength = bean[AppConstant.totalCountKey] ?? 0;
     final currentLength = (isInit ? list.length : state.value?.length) ?? 0;
     if (!isInit && currentLength == listLength) {
       return <T>[];
