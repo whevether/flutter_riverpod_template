@@ -15,8 +15,7 @@ subprojects {
         if (plugins.hasPlugin("com.android.application") || plugins.hasPlugin("com.android.library")) {
             extensions.configure<com.android.build.gradle.BaseExtension> {
                 compileSdkVersion(36)
-                buildToolsVersion = "36.0.0"
-                ndkVersion = "29.0.14206865" 
+                buildToolsVersion = "36.1.0"
                 if (namespace == null) {
                     namespace = project.group.toString()
                 }
