@@ -19,6 +19,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_riverpod_template/router/app_router.dart';
 
 class Utils {
   static late PackageInfo packageInfo;
